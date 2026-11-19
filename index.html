@@ -9,19 +9,19 @@
 <meta name="theme-color" content="#14171c" media="(prefers-color-scheme: dark)">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%231f6feb%22%2F%3E%3Cg%20transform%3D%22translate(256%20256)%20scale(1)%20translate(-256%20-256)%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%2244%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M92%20352V160l82%20104%2082-104v192%22%2F%3E%3Cpath%20d%3D%22M372%20160v184M308%20284l64%2068%2064-68%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23a81a32%22%2F%3E%3Cg%20transform%3D%22translate(256%20256)%20scale(1)%20translate(-256%20-256)%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%2244%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M92%20352V160l82%20104%2082-104v192%22%2F%3E%3Cpath%20d%3D%22M372%20160v184M308%20284l64%2068%2064-68%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
 :root {
   --bg: #ffffff; --bg2: #f3f5f8; --fg: #1c2128; --muted: #667085; --line: #d9dee5;
-  --accent: #1f6feb; --accent-fg: #ffffff; --code-bg: #f3f5f8; --danger: #c62828;
+  --accent: #a81a32; --accent-fg: #ffffff; --link: #a81a32; --code-bg: #f3f5f8; --danger: #c62828;
   --hl-kw: #cf222e; --hl-str: #0a3069; --hl-com: #6e7781; --hl-num: #0550ae; --hl-fn: #8250df; --hl-tag: #116329;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #14171c; --bg2: #1e232b; --fg: #e3e7ec; --muted: #98a2b3; --line: #323a45;
-    --accent: #5b9dff; --accent-fg: #0b1220; --code-bg: #1e232b; --danger: #ff6b6b;
+    --accent: #a81a32; --accent-fg: #ffffff; --link: #ff8a9c; --code-bg: #1e232b; --danger: #ff6b6b;
     --hl-kw: #ff7b72; --hl-str: #a5d6ff; --hl-com: #8b949e; --hl-num: #79c0ff; --hl-fn: #d2a8ff; --hl-tag: #7ee787;
   }
 }
@@ -46,8 +46,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .seg button[aria-selected="true"] { background: var(--accent); color: var(--accent-fg); }
 #menuBtn { flex: none; position: relative; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
 #menuBtn:active, #menuBtn[aria-expanded="true"] { background: var(--bg2); }
-#menuBtn svg { fill: currentColor; }
-#dirtyDot { position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-sizing: content-box; }
+#menuBtn svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+#logo { flex: none; width: 34px; height: 34px; display: block; }
+#logo svg { width: 100%; height: 100%; display: block; border-radius: 8px; }
+#dirtyDot { position: absolute; top: 6px; right: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-sizing: content-box; }
 
 /* ---------- views ---------- */
 main { flex: 1; position: relative; min-height: 0; }
@@ -88,6 +90,11 @@ main { flex: 1; position: relative; min-height: 0; }
 }
 #menu[hidden], #scrim[hidden] { display: none; }
 #fileInfo { padding: 8px 12px 10px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+#recent { border-bottom: 1px solid var(--line); margin-bottom: 6px; padding-bottom: 6px; }
+#recent[hidden] { display: none; }
+#recent .lbl { font-size: .75em; color: var(--muted); padding: 2px 12px 2px; text-transform: uppercase; letter-spacing: .04em; }
+#menu #recent button { min-height: 40px; }
+#recent button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 #fileName { font-weight: 600; overflow-wrap: anywhere; }
 #fileState { font-size: .8em; color: var(--muted); }
 #menu button { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 46px; padding: 0 12px; border-radius: 8px; text-align: left; }
@@ -123,7 +130,7 @@ dialog p { margin: 0 0 18px; }
 .md li + li { margin-top: .2em; }
 .md li:has(> input[type="checkbox"]), .md li:has(> p:first-child > input[type="checkbox"]) { list-style: none; margin-left: -1.5em; }
 .md input[type="checkbox"] { width: 1.15em; height: 1.15em; margin: 0 .5em 0 0; vertical-align: -.15em; accent-color: var(--accent); }
-.md a { color: var(--accent); }
+.md a { color: var(--link); }
 .md blockquote { margin-left: 0; margin-right: 0; padding: 0 1em; color: var(--muted); border-left: 4px solid var(--line); }
 .md code { font: .88em/1.45 ui-monospace, "Roboto Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace; background: var(--code-bg); padding: .15em .35em; border-radius: 5px; }
 .md pre { background: var(--code-bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; }
@@ -151,13 +158,14 @@ dialog p { margin: 0 0 18px; }
 </head>
 <body>
 <header id="bar">
+  <span id="logo" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="0" fill="#a81a32"/><g transform="translate(256 256) scale(1) translate(-256 -256)" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"><path d="M92 352V160l82 104 82-104v192"/><path d="M372 160v184M308 284l64 68 64-68"/></g></svg></span>
   <div class="seg" role="tablist" aria-label="View">
+    <button role="tab" data-view="toc" aria-selected="false">TOC</button>
     <button role="tab" data-view="edit" aria-selected="true">Edit</button>
     <button role="tab" data-view="preview" aria-selected="false">Preview</button>
-    <button role="tab" data-view="toc" aria-selected="false">TOC</button>
   </div>
   <button id="menuBtn" aria-label="File menu" aria-haspopup="menu" aria-expanded="false">
-    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
     <span id="dirtyDot" hidden></span>
   </button>
 </header>
@@ -174,6 +182,7 @@ dialog p { margin: 0 0 18px; }
 <div id="scrim" hidden></div>
 <div id="menu" role="menu" hidden>
   <div id="fileInfo"><div id="fileName"></div><div id="fileState"></div></div>
+  <div id="recent" hidden></div>
   <button role="menuitem" data-act="new"><svg viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M12 12v6M9 15h6"/></svg>New</button>
   <button role="menuitem" data-act="open"><svg viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></svg>Open…</button>
   <button role="menuitem" data-act="save"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>Save</button>
@@ -298,6 +307,7 @@ const $ = id => document.getElementById(id);
 const ta = $('ed'), pv = $('pv'), pvBody = $('pvBody'), tocEl = $('toc'), mirror = $('mirror');
 const menu = $('menu'), scrim = $('scrim'), menuBtn = $('menuBtn');
 const DRAFT_KEY = 'mded.draft.v1';
+const RECENT_KEY = 'mded.recent.v1';
 const DEFAULT_NAME = 'untitled.md';
 const TOP_GAP = 8;            // px kept above the line that is aligned to the top of a view
 const TASK_RE = /^([\s>]*(?:[-*+]|\d+[.)])\s+)\[( |x|X)\]/;
@@ -716,14 +726,67 @@ ta.addEventListener('input', () => { if (!st.dirty) setDirty(true); else saveDra
 addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveDraft(); });
 addEventListener('pagehide', saveDraft);
 
+/* ---------------------------------------------------------- recent files */
+// Each entry: {name, ts, text (snapshot, may be null), handle (when the browser gives one)}
+let recents = [];
+async function loadRecents() {
+  let r = await idbGet('recents');
+  if (!Array.isArray(r)) { try { r = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (e) { r = []; } }
+  recents = Array.isArray(r) ? r : [];
+}
+async function addRecent(name, text, handle) {
+  const keep = [];
+  for (const r of recents) {
+    let same = r.name === name;
+    if (same && handle && r.handle && r.handle.isSameEntry) { try { same = await r.handle.isSameEntry(handle); } catch (e) {} }
+    if (!same) keep.push(r);
+  }
+  recents = [{ name, ts: Date.now(), text: text.length <= 1048576 ? text : null, handle: handle || null }, ...keep].slice(0, 4);
+  idbSet('recents', recents);
+  const plain = recents.map(r => ({ name: r.name, ts: r.ts, text: r.text }));
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(plain)); }
+  catch (e) { try { localStorage.setItem(RECENT_KEY, JSON.stringify(plain.map(r => ({ ...r, text: null })))); } catch (e2) {} }
+}
+function renderRecents() {
+  const box = $('recent');
+  const list = recents.filter(r => r.name !== st.name && (r.handle || r.text != null)).slice(0, 3);
+  box.replaceChildren();
+  box.hidden = !list.length;
+  if (!list.length) return;
+  const lbl = document.createElement('div'); lbl.className = 'lbl'; lbl.textContent = 'Recent'; box.appendChild(lbl);
+  for (const r of list) {
+    const b = document.createElement('button'); b.setAttribute('role', 'menuitem');
+    b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/></svg>';
+    const sp = document.createElement('span'); sp.textContent = r.name; b.appendChild(sp);
+    b._recent = r; box.appendChild(b);
+  }
+}
+async function openRecent(r) {
+  if (!await confirmDiscard('open "' + r.name + '"')) return;
+  if (r.handle) {
+    try {
+      if (r.handle.queryPermission && await r.handle.queryPermission({ mode: 'read' }) !== 'granted') await r.handle.requestPermission({ mode: 'read' });
+      await readFile(await r.handle.getFile(), r.handle);
+      return;
+    } catch (e) { if (isAbort(e)) return; console.warn(e); }
+  }
+  if (r.text == null) { toast('Could not open ' + r.name + ' – use Open… instead'); return; }
+  openDoc(r.text, r.name, null);
+  addRecent(r.name, r.text, null);
+  toast('Opened the last saved copy of ' + r.name);
+}
+
 /* ------------------------------------------------------------- file menu */
 function openMenu(open) {
+  if (open) renderRecents();
   menu.hidden = scrim.hidden = !open;
   menuBtn.setAttribute('aria-expanded', open);
 }
 menuBtn.addEventListener('click', () => openMenu(menu.hidden));
 scrim.addEventListener('click', () => openMenu(false));
 menu.addEventListener('click', e => {
+  const rb = e.target.closest('#recent button');
+  if (rb && rb._recent) { openMenu(false); openRecent(rb._recent).catch(err => { console.error(err); toast('Could not open file'); }); return; }
   const b = e.target.closest('button[data-act]'); if (!b) return;
   openMenu(false);
   actions[b.dataset.act]().catch(err => { console.error(err); toast('Something went wrong: ' + (err && err.message || err)); });
@@ -738,9 +801,17 @@ function setDoc(text, name, handle) {
   setDirty(false); saveDraft();
 }
 
+// a file that was just opened starts on its table of contents (or Preview when it has no headers)
+function openDoc(text, name, handle) {
+  setDoc(text, name, handle);
+  render();
+  show(st.headings.some(h => h.level <= 3) ? 'toc' : 'preview', true);
+}
+
 async function readFile(file, handle) {
   if (file.size > 20 * 1024 * 1024) { toast('That file is too large to edit here'); return; }
-  setDoc(await file.text(), file.name, handle);
+  openDoc(await file.text(), file.name, handle);
+  addRecent(st.name, ta.value, handle);
   toast('Opened ' + file.name);
 }
 
@@ -790,7 +861,7 @@ const actions = {
 
   async save() {
     if (st.handle) {
-      try { await writeHandle(st.handle); setDirty(false); toast('Saved ' + st.name); return; }
+      try { await writeHandle(st.handle); setDirty(false); addRecent(st.name, ta.value, st.handle); toast('Saved ' + st.name); return; }
       catch (e) { if (isAbort(e)) return; console.warn(e); toast('Could not write to the original location – choose where to save'); }
     }
     return actions.saveas();
@@ -805,12 +876,12 @@ const actions = {
         catch (e) { if (e.name !== 'TypeError') throw e; h = await showSaveFilePicker({ suggestedName: name }); }
         await writeHandle(h);
         st.handle = h; st.name = h.name; idbSet('handle', h);
-        setDirty(false); saveDraft(); toast('Saved ' + st.name);
+        setDirty(false); saveDraft(); addRecent(st.name, ta.value, h); toast('Saved ' + st.name);
         return;
       } catch (e) { if (isAbort(e)) return; console.warn(e); }
     }
     download(name);
-    st.name = name; setDirty(false);
+    st.name = name; setDirty(false); addRecent(name, ta.value, null);
     toast('Saved a copy to Downloads (saving in place is not supported in this browser mode)', 4200);
   },
 
@@ -866,7 +937,7 @@ async function receiveShared() {
     const text = await res.text();
     await cache.delete('shared-file');
     if (!await confirmDiscard('open the shared file')) return;
-    setDoc(text, name, null); setDirty(true);
+    openDoc(text, name, null); setDirty(true);
     toast('Received ' + name);
   } catch (e) { console.warn(e); }
 }
@@ -882,6 +953,9 @@ async function receiveShared() {
     if (d.hasHandle) idbGet('handle').then(h => { if (h && !st.handle) { st.handle = h; updateUi(); } });
   }
   updateUi();
+  loadRecents();
+  // sharing only exists in secure contexts (the installed/HTTPS app); elsewhere use Chrome's own Share
+  if (!navigator.share) menu.querySelector('[data-act="share"]').hidden = true;
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     navigator.serviceWorker.register('sw.js').catch(e => console.warn('Service worker not registered', e));

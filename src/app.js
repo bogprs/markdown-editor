@@ -5,6 +5,7 @@ const $ = id => document.getElementById(id);
 const ta = $('ed'), pv = $('pv'), pvBody = $('pvBody'), tocEl = $('toc'), mirror = $('mirror');
 const menu = $('menu'), scrim = $('scrim'), menuBtn = $('menuBtn');
 const DRAFT_KEY = 'mded.draft.v1';
+const RECENT_KEY = 'mded.recent.v1';
 const DEFAULT_NAME = 'untitled.md';
 const TOP_GAP = 8;            // px kept above the line that is aligned to the top of a view
 const TASK_RE = /^([\s>]*(?:[-*+]|\d+[.)])\s+)\[( |x|X)\]/;
@@ -423,14 +424,67 @@ ta.addEventListener('input', () => { if (!st.dirty) setDirty(true); else saveDra
 addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveDraft(); });
 addEventListener('pagehide', saveDraft);
 
+/* ---------------------------------------------------------- recent files */
+// Each entry: {name, ts, text (snapshot, may be null), handle (when the browser gives one)}
+let recents = [];
+async function loadRecents() {
+  let r = await idbGet('recents');
+  if (!Array.isArray(r)) { try { r = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (e) { r = []; } }
+  recents = Array.isArray(r) ? r : [];
+}
+async function addRecent(name, text, handle) {
+  const keep = [];
+  for (const r of recents) {
+    let same = r.name === name;
+    if (same && handle && r.handle && r.handle.isSameEntry) { try { same = await r.handle.isSameEntry(handle); } catch (e) {} }
+    if (!same) keep.push(r);
+  }
+  recents = [{ name, ts: Date.now(), text: text.length <= 1048576 ? text : null, handle: handle || null }, ...keep].slice(0, 4);
+  idbSet('recents', recents);
+  const plain = recents.map(r => ({ name: r.name, ts: r.ts, text: r.text }));
+  try { localStorage.setItem(RECENT_KEY, JSON.stringify(plain)); }
+  catch (e) { try { localStorage.setItem(RECENT_KEY, JSON.stringify(plain.map(r => ({ ...r, text: null })))); } catch (e2) {} }
+}
+function renderRecents() {
+  const box = $('recent');
+  const list = recents.filter(r => r.name !== st.name && (r.handle || r.text != null)).slice(0, 3);
+  box.replaceChildren();
+  box.hidden = !list.length;
+  if (!list.length) return;
+  const lbl = document.createElement('div'); lbl.className = 'lbl'; lbl.textContent = 'Recent'; box.appendChild(lbl);
+  for (const r of list) {
+    const b = document.createElement('button'); b.setAttribute('role', 'menuitem');
+    b.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/></svg>';
+    const sp = document.createElement('span'); sp.textContent = r.name; b.appendChild(sp);
+    b._recent = r; box.appendChild(b);
+  }
+}
+async function openRecent(r) {
+  if (!await confirmDiscard('open "' + r.name + '"')) return;
+  if (r.handle) {
+    try {
+      if (r.handle.queryPermission && await r.handle.queryPermission({ mode: 'read' }) !== 'granted') await r.handle.requestPermission({ mode: 'read' });
+      await readFile(await r.handle.getFile(), r.handle);
+      return;
+    } catch (e) { if (isAbort(e)) return; console.warn(e); }
+  }
+  if (r.text == null) { toast('Could not open ' + r.name + ' – use Open… instead'); return; }
+  openDoc(r.text, r.name, null);
+  addRecent(r.name, r.text, null);
+  toast('Opened the last saved copy of ' + r.name);
+}
+
 /* ------------------------------------------------------------- file menu */
 function openMenu(open) {
+  if (open) renderRecents();
   menu.hidden = scrim.hidden = !open;
   menuBtn.setAttribute('aria-expanded', open);
 }
 menuBtn.addEventListener('click', () => openMenu(menu.hidden));
 scrim.addEventListener('click', () => openMenu(false));
 menu.addEventListener('click', e => {
+  const rb = e.target.closest('#recent button');
+  if (rb && rb._recent) { openMenu(false); openRecent(rb._recent).catch(err => { console.error(err); toast('Could not open file'); }); return; }
   const b = e.target.closest('button[data-act]'); if (!b) return;
   openMenu(false);
   actions[b.dataset.act]().catch(err => { console.error(err); toast('Something went wrong: ' + (err && err.message || err)); });
@@ -445,9 +499,17 @@ function setDoc(text, name, handle) {
   setDirty(false); saveDraft();
 }
 
+// a file that was just opened starts on its table of contents (or Preview when it has no headers)
+function openDoc(text, name, handle) {
+  setDoc(text, name, handle);
+  render();
+  show(st.headings.some(h => h.level <= 3) ? 'toc' : 'preview', true);
+}
+
 async function readFile(file, handle) {
   if (file.size > 20 * 1024 * 1024) { toast('That file is too large to edit here'); return; }
-  setDoc(await file.text(), file.name, handle);
+  openDoc(await file.text(), file.name, handle);
+  addRecent(st.name, ta.value, handle);
   toast('Opened ' + file.name);
 }
 
@@ -497,7 +559,7 @@ const actions = {
 
   async save() {
     if (st.handle) {
-      try { await writeHandle(st.handle); setDirty(false); toast('Saved ' + st.name); return; }
+      try { await writeHandle(st.handle); setDirty(false); addRecent(st.name, ta.value, st.handle); toast('Saved ' + st.name); return; }
       catch (e) { if (isAbort(e)) return; console.warn(e); toast('Could not write to the original location – choose where to save'); }
     }
     return actions.saveas();
@@ -512,12 +574,12 @@ const actions = {
         catch (e) { if (e.name !== 'TypeError') throw e; h = await showSaveFilePicker({ suggestedName: name }); }
         await writeHandle(h);
         st.handle = h; st.name = h.name; idbSet('handle', h);
-        setDirty(false); saveDraft(); toast('Saved ' + st.name);
+        setDirty(false); saveDraft(); addRecent(st.name, ta.value, h); toast('Saved ' + st.name);
         return;
       } catch (e) { if (isAbort(e)) return; console.warn(e); }
     }
     download(name);
-    st.name = name; setDirty(false);
+    st.name = name; setDirty(false); addRecent(name, ta.value, null);
     toast('Saved a copy to Downloads (saving in place is not supported in this browser mode)', 4200);
   },
 
@@ -573,7 +635,7 @@ async function receiveShared() {
     const text = await res.text();
     await cache.delete('shared-file');
     if (!await confirmDiscard('open the shared file')) return;
-    setDoc(text, name, null); setDirty(true);
+    openDoc(text, name, null); setDirty(true);
     toast('Received ' + name);
   } catch (e) { console.warn(e); }
 }
@@ -589,6 +651,9 @@ async function receiveShared() {
     if (d.hasHandle) idbGet('handle').then(h => { if (h && !st.handle) { st.handle = h; updateUi(); } });
   }
   updateUi();
+  loadRecents();
+  // sharing only exists in secure contexts (the installed/HTTPS app); elsewhere use Chrome's own Share
+  if (!navigator.share) menu.querySelector('[data-act="share"]').hidden = true;
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     navigator.serviceWorker.register('sw.js').catch(e => console.warn('Service worker not registered', e));

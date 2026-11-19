@@ -1,13 +1,13 @@
 :root {
   --bg: #ffffff; --bg2: #f3f5f8; --fg: #1c2128; --muted: #667085; --line: #d9dee5;
-  --accent: #1f6feb; --accent-fg: #ffffff; --code-bg: #f3f5f8; --danger: #c62828;
+  --accent: #a81a32; --accent-fg: #ffffff; --link: #a81a32; --code-bg: #f3f5f8; --danger: #c62828;
   --hl-kw: #cf222e; --hl-str: #0a3069; --hl-com: #6e7781; --hl-num: #0550ae; --hl-fn: #8250df; --hl-tag: #116329;
   color-scheme: light dark;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #14171c; --bg2: #1e232b; --fg: #e3e7ec; --muted: #98a2b3; --line: #323a45;
-    --accent: #5b9dff; --accent-fg: #0b1220; --code-bg: #1e232b; --danger: #ff6b6b;
+    --accent: #a81a32; --accent-fg: #ffffff; --link: #ff8a9c; --code-bg: #1e232b; --danger: #ff6b6b;
     --hl-kw: #ff7b72; --hl-str: #a5d6ff; --hl-com: #8b949e; --hl-num: #79c0ff; --hl-fn: #d2a8ff; --hl-tag: #7ee787;
   }
 }
@@ -32,8 +32,10 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .seg button[aria-selected="true"] { background: var(--accent); color: var(--accent-fg); }
 #menuBtn { flex: none; position: relative; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
 #menuBtn:active, #menuBtn[aria-expanded="true"] { background: var(--bg2); }
-#menuBtn svg { fill: currentColor; }
-#dirtyDot { position: absolute; top: 8px; right: 8px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-sizing: content-box; }
+#menuBtn svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+#logo { flex: none; width: 34px; height: 34px; display: block; }
+#logo svg { width: 100%; height: 100%; display: block; border-radius: 8px; }
+#dirtyDot { position: absolute; top: 6px; right: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-sizing: content-box; }
 
 /* ---------- views ---------- */
 main { flex: 1; position: relative; min-height: 0; }
@@ -74,6 +76,11 @@ main { flex: 1; position: relative; min-height: 0; }
 }
 #menu[hidden], #scrim[hidden] { display: none; }
 #fileInfo { padding: 8px 12px 10px; border-bottom: 1px solid var(--line); margin-bottom: 6px; }
+#recent { border-bottom: 1px solid var(--line); margin-bottom: 6px; padding-bottom: 6px; }
+#recent[hidden] { display: none; }
+#recent .lbl { font-size: .75em; color: var(--muted); padding: 2px 12px 2px; text-transform: uppercase; letter-spacing: .04em; }
+#menu #recent button { min-height: 40px; }
+#recent button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
 #fileName { font-weight: 600; overflow-wrap: anywhere; }
 #fileState { font-size: .8em; color: var(--muted); }
 #menu button { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 46px; padding: 0 12px; border-radius: 8px; text-align: left; }
@@ -109,7 +116,7 @@ dialog p { margin: 0 0 18px; }
 .md li + li { margin-top: .2em; }
 .md li:has(> input[type="checkbox"]), .md li:has(> p:first-child > input[type="checkbox"]) { list-style: none; margin-left: -1.5em; }
 .md input[type="checkbox"] { width: 1.15em; height: 1.15em; margin: 0 .5em 0 0; vertical-align: -.15em; accent-color: var(--accent); }
-.md a { color: var(--accent); }
+.md a { color: var(--link); }
 .md blockquote { margin-left: 0; margin-right: 0; padding: 0 1em; color: var(--muted); border-left: 4px solid var(--line); }
 .md code { font: .88em/1.45 ui-monospace, "Roboto Mono", "DejaVu Sans Mono", Menlo, Consolas, monospace; background: var(--code-bg); padding: .15em .35em; border-radius: 5px; }
 .md pre { background: var(--code-bg); padding: 12px 14px; border-radius: 8px; overflow-x: auto; }

@@ -22,10 +22,11 @@ const katexCss = read(katexDir + 'katex.min.css').replace(
 );
 if (/url\(fonts\//.test(katexCss)) throw new Error('KaTeX font inlining failed');
 
-const iconSvg = (pad, radius) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="${radius}" fill="#1f6feb"/><g transform="translate(256 256) scale(${1 - pad}) translate(-256 -256)" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"><path d="M92 352V160l82 104 82-104v192"/><path d="M372 160v184M308 284l64 68 64-68"/></g></svg>`;
+const iconSvg = (pad, radius) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="${radius}" fill="#a81a32"/><g transform="translate(256 256) scale(${1 - pad}) translate(-256 -256)" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"><path d="M92 352V160l82 104 82-104v192"/><path d="M372 160v184M308 284l64 68 64-68"/></g></svg>`;
 
 const parts = {
   FAVICON: encodeURIComponent(iconSvg(0, 96)),
+  LOGO: iconSvg(0, 0),
   CSS: read('src/app.css'),
   JS: embed('app.js', read('src/app.js')),
   LIB_MARKED: embed('marked', lib('marked/lib/marked.umd.js')),

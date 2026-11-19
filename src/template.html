@@ -17,13 +17,14 @@
 </head>
 <body>
 <header id="bar">
+  <span id="logo" aria-hidden="true">%%LOGO%%</span>
   <div class="seg" role="tablist" aria-label="View">
+    <button role="tab" data-view="toc" aria-selected="false">TOC</button>
     <button role="tab" data-view="edit" aria-selected="true">Edit</button>
     <button role="tab" data-view="preview" aria-selected="false">Preview</button>
-    <button role="tab" data-view="toc" aria-selected="false">TOC</button>
   </div>
   <button id="menuBtn" aria-label="File menu" aria-haspopup="menu" aria-expanded="false">
-    <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+    <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg>
     <span id="dirtyDot" hidden></span>
   </button>
 </header>
@@ -40,6 +41,7 @@
 <div id="scrim" hidden></div>
 <div id="menu" role="menu" hidden>
   <div id="fileInfo"><div id="fileName"></div><div id="fileState"></div></div>
+  <div id="recent" hidden></div>
   <button role="menuitem" data-act="new"><svg viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M12 12v6M9 15h6"/></svg>New</button>
   <button role="menuitem" data-act="open"><svg viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></svg>Open…</button>
   <button role="menuitem" data-act="save"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>Save</button>
