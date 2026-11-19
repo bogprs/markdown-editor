@@ -1,5 +1,5 @@
 /* Service worker: offline app shell + receiving files shared to the installed app. */
-const VERSION = 'mded-v4';
+const VERSION = 'mded-v5';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png'];
 
 self.addEventListener('install', e => {

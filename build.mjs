@@ -31,7 +31,6 @@ const iconSvg = (shape = 'circle') => `<svg xmlns="http://www.w3.org/2000/svg" v
 
 const parts = {
   FAVICON: encodeURIComponent(iconSvg()),
-  LOGO: iconSvg(),
   CSS: read('src/app.css'),
   JS: embed('app.js', read('src/app.js')),
   LIB_MARKED: embed('marked', lib('marked/lib/marked.umd.js')),
