@@ -9,8 +9,14 @@ A small offline Markdown editor for Android browsers (Chrome). One self-containe
 
 ## Use
 
-- **As a file:** copy `index.html` to the phone and open it in Chrome.
-- **As an app:** serve this folder over HTTPS (for example GitHub Pages), open it in Chrome and choose *Install app*.
+**Recommended – install it as an app:**
+
+1. On your Android phone, open **https://bogprs.github.io/markdown-editor/** in Chrome.
+2. Open the app's menu (hamburger icon) and tap **Install app**, or use Chrome's ⋮ menu → **Add to Home screen** → **Install**.
+
+The editor then sits on your home screen with its own icon, opens full-screen and works offline. Saving back to the same file works best in this mode.
+
+**Alternative – as a single file:** copy `index.html` to the phone and open it in Chrome. No install is needed, but Chrome restricts local files: there is no home-screen icon, and Save may download a copy instead of writing to the chosen location.
 
 ## Build
 
