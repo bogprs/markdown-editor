@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#14171c" media="(prefers-color-scheme: dark)">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Crect%20width%3D%22512%22%20height%3D%22512%22%20rx%3D%2296%22%20fill%3D%22%23a81a32%22%2F%3E%3Cg%20transform%3D%22translate(256%20256)%20scale(1)%20translate(-256%20-256)%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%2244%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M92%20352V160l82%20104%2082-104v192%22%2F%3E%3Cpath%20d%3D%22M372%20160v184M308%20284l64%2068%2064-68%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20512%20512%22%3E%3Ccircle%20cx%3D%22256%22%20cy%3D%22256%22%20r%3D%22240%22%20fill%3D%22%23a81a32%22%2F%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%2222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M158%20362V152l104%20132%2082-104%22%2F%3E%3Cpath%20d%3D%22M112%20316l46%2046%2046-46%22%2F%3E%3Cpath%20d%3D%22M344%20312V166a16%2016%200%200%201%2016-16h20a16%2016%200%200%201%2016%2016v146l-26%2052z%22%2F%3E%3Cpath%20d%3D%22M344%20196h52%22%2F%3E%3Cpath%20d%3D%22M344%20312h52l-26%2052z%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <style>
 :root {
@@ -47,8 +47,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 #menuBtn { flex: none; position: relative; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
 #menuBtn:active, #menuBtn[aria-expanded="true"] { background: var(--bg2); }
 #menuBtn svg { fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
-#logo { flex: none; width: 34px; height: 34px; display: block; }
-#logo svg { width: 100%; height: 100%; display: block; border-radius: 8px; }
+#splash { position: fixed; inset: 0; z-index: 100; background: #fff; display: grid; place-items: center; transition: opacity .25s; }
+#splash svg { width: min(40vw, 168px); height: auto; }
+#splash.off { opacity: 0; pointer-events: none; }
 #dirtyDot { position: absolute; top: 6px; right: 5px; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); border: 2px solid var(--bg); box-sizing: content-box; }
 
 /* ---------- views ---------- */
@@ -157,8 +158,8 @@ dialog p { margin: 0 0 18px; }
 </style>
 </head>
 <body>
+<div id="splash" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><circle cx="256" cy="256" r="240" fill="#a81a32"/><g fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M158 362V152l104 132 82-104"/><path d="M112 316l46 46 46-46"/><path d="M344 312V166a16 16 0 0 1 16-16h20a16 16 0 0 1 16 16v146l-26 52z"/><path d="M344 196h52"/><path d="M344 312h52l-26 52z" fill="#fff"/></g></svg></div>
 <header id="bar">
-  <span id="logo" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="0" fill="#a81a32"/><g transform="translate(256 256) scale(1) translate(-256 -256)" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"><path d="M92 352V160l82 104 82-104v192"/><path d="M372 160v184M308 284l64 68 64-68"/></g></svg></span>
   <div class="seg" role="tablist" aria-label="View">
     <button role="tab" data-view="toc" aria-selected="false">TOC</button>
     <button role="tab" data-view="edit" aria-selected="true">Edit</button>
@@ -187,7 +188,6 @@ dialog p { margin: 0 0 18px; }
   <button role="menuitem" data-act="open"><svg viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></svg>Open…</button>
   <button role="menuitem" data-act="save"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/></svg>Save</button>
   <button role="menuitem" data-act="saveas"><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M12 10v7M9 14l3 3 3-3"/></svg>Save as…</button>
-  <button role="menuitem" data-act="share"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 10.9l7.6-3.8M8.2 13.1l7.6 3.8"/></svg>Share…</button>
   <button role="menuitem" data-act="install" hidden><svg viewBox="0 0 24 24"><path d="M12 4v11M8 11l4 4 4-4M5 20h14"/></svg>Install app</button>
 </div>
 
@@ -885,24 +885,6 @@ const actions = {
     toast('Saved a copy to Downloads (saving in place is not supported in this browser mode)', 4200);
   },
 
-  async share() {
-    const text = ta.value, name = suggestedName();
-    if (!text.trim()) { toast('Nothing to share yet'); return; }
-    if (navigator.share) {
-      const tries = [];
-      for (const type of ['text/markdown', 'text/plain']) {
-        try { const f = new File([text], name, { type }); if (navigator.canShare && navigator.canShare({ files: [f] })) tries.push({ files: [f], title: name }); } catch (e) {}
-      }
-      tries.push({ title: name, text });
-      for (const data of tries) {
-        try { await navigator.share(data); return; }
-        catch (e) { if (isAbort(e)) return; console.warn(e); }
-      }
-    }
-    try { await navigator.clipboard.writeText(text); toast('Sharing is not available here – text copied to clipboard instead'); }
-    catch (e) { toast('Sharing is not available in this browser mode'); }
-  },
-
   async install() {
     if (!installEvt) return;
     installEvt.prompt(); await installEvt.userChoice; installEvt = null;
@@ -954,8 +936,8 @@ async function receiveShared() {
   }
   updateUi();
   loadRecents();
-  // sharing only exists in secure contexts (the installed/HTTPS app); elsewhere use Chrome's own Share
-  if (!navigator.share) menu.querySelector('[data-act="share"]').hidden = true;
+  const splash = $('splash');
+  setTimeout(() => { splash.classList.add('off'); setTimeout(() => splash.remove(), 300); }, 650);
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     navigator.serviceWorker.register('sw.js').catch(e => console.warn('Service worker not registered', e));

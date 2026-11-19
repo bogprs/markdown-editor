@@ -22,11 +22,16 @@ const katexCss = read(katexDir + 'katex.min.css').replace(
 );
 if (/url\(fonts\//.test(katexCss)) throw new Error('KaTeX font inlining failed');
 
-const iconSvg = (pad, radius) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="${radius}" fill="#a81a32"/><g transform="translate(256 256) scale(${1 - pad}) translate(-256 -256)" fill="none" stroke="#fff" stroke-width="44" stroke-linecap="round" stroke-linejoin="round"><path d="M92 352V160l82 104 82-104v192"/><path d="M372 160v184M308 284l64 68 64-68"/></g></svg>`;
+// White line-art "M": left leg ends in the Markdown down-arrow, right leg is a pencil.
+const iconArt = `<g fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M158 362V152l104 132 82-104"/><path d="M112 316l46 46 46-46"/><path d="M344 312V166a16 16 0 0 1 16-16h20a16 16 0 0 1 16 16v146l-26 52z"/><path d="M344 196h52"/><path d="M344 312h52l-26 52z" fill="#fff"/></g>`;
+// shape: 'circle' (transparent corners) or 'full' (full-bleed square for Android maskable icons)
+const iconSvg = (shape = 'circle') => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">${shape === 'full'
+  ? `<rect width="512" height="512" fill="#a81a32"/><g transform="translate(256 256) scale(.72) translate(-256 -256)">${iconArt}</g>`
+  : `<circle cx="256" cy="256" r="240" fill="#a81a32"/>${iconArt}`}</svg>`;
 
 const parts = {
-  FAVICON: encodeURIComponent(iconSvg(0, 96)),
-  LOGO: iconSvg(0, 0),
+  FAVICON: encodeURIComponent(iconSvg()),
+  LOGO: iconSvg(),
   CSS: read('src/app.css'),
   JS: embed('app.js', read('src/app.js')),
   LIB_MARKED: embed('marked', lib('marked/lib/marked.umd.js')),
@@ -45,6 +50,8 @@ const html = read('src/template.html').replace(/%%([A-Z_]+)%%/g, (m, k) => {
   return parts[k];
 });
 writeFileSync('index.html', html);
+mkdirSync('icons', { recursive: true });
+writeFileSync('icons/icon.svg', iconSvg() + '\n');
 console.log(`index.html  ${(Buffer.byteLength(html) / 1048576).toFixed(2)} MB`);
 
 // PWA icons (rendered with the Chromium that ships with Playwright)
@@ -52,9 +59,9 @@ if (process.argv.includes('--icons') || !existsSync('icons/icon-512.png')) {
   const { chromium } = require('playwright');
   mkdirSync('icons', { recursive: true });
   const browser = await chromium.launch();
-  for (const [file, size, pad, radius] of [['icon-192.png', 192, 0, 96], ['icon-512.png', 512, 0, 96], ['icon-maskable-512.png', 512, 0.3, 0]]) {
+  for (const [file, size, shape] of [['icon-192.png', 192, 'circle'], ['icon-512.png', 512, 'circle'], ['icon-maskable-512.png', 512, 'full']]) {
     const page = await browser.newPage({ viewport: { width: size, height: size } });
-    await page.setContent(`<style>html,body{margin:0;background:transparent}svg{display:block;width:${size}px;height:${size}px}</style>${iconSvg(pad, radius)}`);
+    await page.setContent(`<style>html,body{margin:0;background:transparent}svg{display:block;width:${size}px;height:${size}px}</style>${iconSvg(shape)}`);
     await page.screenshot({ path: 'icons/' + file, omitBackground: true });
     await page.close();
   }

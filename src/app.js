@@ -583,24 +583,6 @@ const actions = {
     toast('Saved a copy to Downloads (saving in place is not supported in this browser mode)', 4200);
   },
 
-  async share() {
-    const text = ta.value, name = suggestedName();
-    if (!text.trim()) { toast('Nothing to share yet'); return; }
-    if (navigator.share) {
-      const tries = [];
-      for (const type of ['text/markdown', 'text/plain']) {
-        try { const f = new File([text], name, { type }); if (navigator.canShare && navigator.canShare({ files: [f] })) tries.push({ files: [f], title: name }); } catch (e) {}
-      }
-      tries.push({ title: name, text });
-      for (const data of tries) {
-        try { await navigator.share(data); return; }
-        catch (e) { if (isAbort(e)) return; console.warn(e); }
-      }
-    }
-    try { await navigator.clipboard.writeText(text); toast('Sharing is not available here – text copied to clipboard instead'); }
-    catch (e) { toast('Sharing is not available in this browser mode'); }
-  },
-
   async install() {
     if (!installEvt) return;
     installEvt.prompt(); await installEvt.userChoice; installEvt = null;
@@ -652,8 +634,8 @@ async function receiveShared() {
   }
   updateUi();
   loadRecents();
-  // sharing only exists in secure contexts (the installed/HTTPS app); elsewhere use Chrome's own Share
-  if (!navigator.share) menu.querySelector('[data-act="share"]').hidden = true;
+  const splash = $('splash');
+  setTimeout(() => { splash.classList.add('off'); setTimeout(() => splash.remove(), 300); }, 650);
 
   if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
     navigator.serviceWorker.register('sw.js').catch(e => console.warn('Service worker not registered', e));
