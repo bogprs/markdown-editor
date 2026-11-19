@@ -22,8 +22,8 @@ const katexCss = read(katexDir + 'katex.min.css').replace(
 );
 if (/url\(fonts\//.test(katexCss)) throw new Error('KaTeX font inlining failed');
 
-// White line-art "M": left leg ends in the Markdown down-arrow, right leg is a pencil.
-const iconArt = `<g fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"><path d="M158 362V152l104 132 82-104"/><path d="M112 316l46 46 46-46"/><path d="M344 312V166a16 16 0 0 1 16-16h20a16 16 0 0 1 16 16v146l-26 52z"/><path d="M344 196h52"/><path d="M344 312h52l-26 52z" fill="#fff"/></g>`;
+// Outlined bold "M": left leg ends in the Markdown down-arrow, right leg is a pencil with eraser and tip.
+const iconArt = `<g fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><path d="M120 304V154H170L256 266L342 154V140a14 14 0 0 1 14-14h22a14 14 0 0 1 14 14V314L367 370L342 314V232L256 344L170 232V304H202L145 370L88 304Z"/><path d="M342 154H392M342 314H392"/><path fill="#fff" stroke-width="6" d="M358 350h18l-9 20z"/></g>`;
 // shape: 'circle' (transparent corners) or 'full' (full-bleed square for Android maskable icons)
 const iconSvg = (shape = 'circle') => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">${shape === 'full'
   ? `<rect width="512" height="512" fill="#a81a32"/><g transform="translate(256 256) scale(.72) translate(-256 -256)">${iconArt}</g>`
