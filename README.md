@@ -43,7 +43,7 @@ Choose **New** and start typing. Everything you write is kept as a draft automat
 
 ### Recent files
 
-The menu lists the three files you opened or saved most recently. Tap one to open it again.
+The menu lists the files you opened or saved most recently – as many as fit on the screen. Tap one to open it again.
 
 ### What Preview understands
 

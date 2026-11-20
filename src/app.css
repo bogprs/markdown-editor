@@ -79,7 +79,7 @@ main { flex: 1; position: relative; min-height: 0; }
 #recent .lbl { font-size: .75em; color: var(--muted); padding: 2px 12px 2px; text-transform: uppercase; letter-spacing: .04em; }
 #menu #recent button { min-height: 40px; }
 #recent button span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-#fileName { font-weight: 600; overflow-wrap: anywhere; }
+#fileName { color: var(--link); font-weight: 600; overflow-wrap: anywhere; }
 #fileState { font-size: .8em; color: var(--muted); }
 #menu button { display: flex; align-items: center; gap: 14px; width: 100%; min-height: 46px; padding: 0 12px; border-radius: 8px; text-align: left; }
 #menu button[hidden] { display: none; }

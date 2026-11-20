@@ -426,6 +426,7 @@ addEventListener('pagehide', saveDraft);
 
 /* ---------------------------------------------------------- recent files */
 // Each entry: {name, ts, text (snapshot, may be null), handle (when the browser gives one)}
+const MAX_RECENTS = 20;
 let recents = [];
 async function loadRecents() {
   let r = await idbGet('recents');
@@ -439,15 +440,17 @@ async function addRecent(name, text, handle) {
     if (same && handle && r.handle && r.handle.isSameEntry) { try { same = await r.handle.isSameEntry(handle); } catch (e) {} }
     if (!same) keep.push(r);
   }
-  recents = [{ name, ts: Date.now(), text: text.length <= 1048576 ? text : null, handle: handle || null }, ...keep].slice(0, 4);
+  recents = [{ name, ts: Date.now(), text: text.length <= 1048576 ? text : null, handle: handle || null }, ...keep].slice(0, MAX_RECENTS);
   idbSet('recents', recents);
-  const plain = recents.map(r => ({ name: r.name, ts: r.ts, text: r.text }));
+  // the fallback copy shares limited storage with the draft, so only the newest snapshots keep their text
+  let budget = 1500000;
+  const plain = recents.map(r => { const keepText = r.text != null && (budget -= r.text.length) >= 0; return { name: r.name, ts: r.ts, text: keepText ? r.text : null }; });
   try { localStorage.setItem(RECENT_KEY, JSON.stringify(plain)); }
   catch (e) { try { localStorage.setItem(RECENT_KEY, JSON.stringify(plain.map(r => ({ ...r, text: null })))); } catch (e2) {} }
 }
 function renderRecents() {
   const box = $('recent');
-  const list = recents.filter(r => r.name !== st.name && (r.handle || r.text != null)).slice(0, 3);
+  const list = recents.filter(r => r.name !== st.name && (r.handle || r.text != null));
   box.replaceChildren();
   box.hidden = !list.length;
   if (!list.length) return;
@@ -458,6 +461,9 @@ function renderRecents() {
     const sp = document.createElement('span'); sp.textContent = r.name; b.appendChild(sp);
     b._recent = r; box.appendChild(b);
   }
+  // show as many as fit on screen without pushing the file operations out of view
+  while (menu.scrollHeight > menu.clientHeight + 1 && box.lastElementChild && box.lastElementChild !== lbl) box.lastElementChild.remove();
+  if (box.lastElementChild === lbl) { box.replaceChildren(); box.hidden = true; }
 }
 async function openRecent(r) {
   if (!await confirmDiscard('open "' + r.name + '"')) return;
@@ -476,8 +482,8 @@ async function openRecent(r) {
 
 /* ------------------------------------------------------------- file menu */
 function openMenu(open) {
-  if (open) renderRecents();
   menu.hidden = scrim.hidden = !open;
+  if (open) renderRecents();          // after showing, so it can measure what fits
   menuBtn.setAttribute('aria-expanded', open);
 }
 menuBtn.addEventListener('click', () => openMenu(menu.hidden));
